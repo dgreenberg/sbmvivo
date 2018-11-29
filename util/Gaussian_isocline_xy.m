@@ -1,0 +1,9 @@
+function [x, y] = Gaussian_isocline_xy(m, V, n)
+if ~exist('n', 'var'), n = 361; end
+tt = 2 * pi * linspace(0, n - 1) / (n - 1);
+dxy = [cos(tt); sin(tt)];
+m = m(:);
+[v, d] = eig(V);
+xy = bsxfun(@plus, m, v * sqrt(d) * dxy);
+x = xy(1, :);
+y = xy(2, :);

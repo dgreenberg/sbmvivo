@@ -1,0 +1,15 @@
+.DS*
+*.*~
+*.asv
+*.aux
+*.log
+*.dvi
+*.bbl
+*.m~
+*.asv
+*.toc
+*.out
+figs/
+*.mex*
+.directory
+data/*.mat
