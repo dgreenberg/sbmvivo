@@ -3,7 +3,7 @@
 
 This repository contains the sequential binding model (SBM) and tools for model-fitting and AP inference on *in vivo* fluorescence data.
 
-The model and related algorithms are described in our [bioRxiv paper](). Tools for *in vitro* data can be found in [sbmvitro](https://github.com/dgreenberg/sbmvitro).
+The model and related algorithms are described in our [bioRxiv paper](https://www.biorxiv.org/content/early/2018/11/29/479055). Tools for *in vitro* data can be found in [sbmvitro](https://github.com/dgreenberg/sbmvitro).
 
 `sbmvivo` also contains wrappers for several other algorithms and a graphical user interface to compare them over multiple recordings, neurons and datasets.
 
@@ -46,7 +46,7 @@ Datasets can be loaded into `oedatabrowser` automatically on startup by placing 
 Pressing **ctrl + D** in `oedatabrowser` saves several variables describing the currently selected data and AP inference results to the base Matlab workspace.
 
 ## Data file formats
-Datasets should be saved in `.mat` files containing a variable named `oerec`. The data format is described in `structs/empty_oerec` and other files referenced therein. An example can be found in the supplementary data of the [bioRxiv paper]().
+Datasets should be saved in `.mat` files containing a variable named `oerec`. The data format is described in `structs/empty_oerec` and other files referenced therein. An example can be found in the supplementary data of the [bioRxiv paper](https://www.biorxiv.org/content/early/2018/11/29/479055).
 
 Libraries containing multiple datasets, parameter sets, algorithm settings and inferred APs are saved and loaded by `oedatabrowser` and the command line tools as `.odb` files, which are actually zip files containing `.mat` files.
 
