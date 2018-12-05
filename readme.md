@@ -17,6 +17,11 @@ Fitting all SBM parameters to a dataset with known AP times requires the optimiz
 
 CUDA algorithms require [CUB](https://nvlabs.github.io/cub/). Pre-compiled MEX wrappers for CUDA algorithms should work out of the box on most systems, but otherwise a readme and makefile are available for recompilation. Currently they have only been compiled and tested on Linux, though non-CUDA MEX files work on windows as well.
 
+### MEX file compilation
+Non-CUDA MEX files can be compiled directly using MEX. Some have comments in the file indicating how they should be compiled, for an example see `fspikecountsfit_5state_odesolver_backwardeuler_mainloop.cpp` in the subdirectory `mex/sbm_fit`.
+
+CUDA MEX files should be compiled with a makefile, which is found in the subdirectory `mex/sbm_cuda`.
+
 ## Command line tools
 SBM-based inference of AP times and neuron-specific parameters from fluorescence alone, when global parameters are known, is available through the command
 ```matlab
