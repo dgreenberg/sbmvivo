@@ -15,12 +15,18 @@ After cloning the repository, open Matlab, change your current directory to the 
 ### Dependencies
 Fitting all SBM parameters to a dataset with known AP times requires the optimization toolbox, while AP inference and parameter inference from fluorescence alone do not.
 
-CUDA algorithms require [CUB](https://nvlabs.github.io/cub/). Pre-compiled MEX wrappers for CUDA algorithms should work out of the box on most systems, but otherwise a readme and makefile are available for recompilation. Currently they have only been compiled and tested on Linux, though non-CUDA MEX files work on windows as well.
+CUDA algorithms require [CUB](https://nvlabs.github.io/cub/).
 
-### MEX file compilation
-Non-CUDA MEX files can be compiled directly using MEX. Some have comments in the file indicating how they should be compiled, for an example see `fspikecountsfit_5state_odesolver_backwardeuler_mainloop.cpp` in the subdirectory `mex/sbm_fit`.
+### Precompiled CUDA MEX files
+Precompiled MEX wrappers for CUDA algorithms are provided for the following setup:
 
-CUDA MEX files should be compiled with a makefile, which is found in the subdirectory `mex/sbm_cuda`.
+* Linux
+* CUDA 9.1 release 9.1.85
+* nVidia driver version 390.48
+* GPU: Tesla K40, Tesla K20c or GeForce GTX 1080
+* Matlab R2018a
+
+They may also work with other configurations but have not been widely tested. Changing the graphics card or Matlab version probably won't make a difference, while changing the CUDA version may require recompilation. If the precompiled MEX files do not work, you out of the box on your system, you will have to recompile them (see below).
 
 ## Command line tools
 SBM-based inference of AP times and neuron-specific parameters from fluorescence alone, when global parameters are known, is available through the command
@@ -62,3 +68,11 @@ In the near future, it will also be possible to add training routines for parame
 
 ## GPU debugging
 The GPU-based inference method can also be run as a standalone application for easier debugging. The Matlab-based command-line tool `sbm.toraw()` and GUI can export an inference problem to a file that can be read by this application. This process will be further-documented in the near future.
+
+## MEX file compilation
+Non-CUDA MEX files can be compiled directly using MEX. Some have comments in the file indicating how they should be compiled, for an example see `fspikecountsfit_5state_odesolver_backwardeuler_mainloop.cpp` in the subdirectory `mex/sbm_fit`.
+
+CUDA MEX files should be compiled with a makefile, which is found in the subdirectory `mex/sbm_cuda`. So far, they have only been compiled on linux. If you encounter a compilation or runtime error, you can create an issue on this repository to ask for help. In that case, please make sure to include the following:
+* Information about your OS and Matlab version
+* Output of the command nvcc --version
+* Output of the command nvidia-smi
