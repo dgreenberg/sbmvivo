@@ -10,6 +10,8 @@ The model and related algorithms are described in our [bioRxiv paper](https://ww
 Most of the code is written in Matlab, with a few performance-critical routines coded in C++. The AP inference routine for the SBM is implemented in both Matlab and CUDA C++ for testing purposes, but computation using the CUDA version on a GPU is essentially mandatory when inferring neuron-specific parameters on all but the smallest datasets.
 
 ## Installation
+***Warning: do not simply add the entire repository with all subfolders to the Matlab path!***
+
 After cloning the repository, open Matlab, change your current directory to the base directory of this repository and run `install_sbmvivo` to update your path. The path changes will be saved if you have write access to your `pathdef.m`.
 
 ### Dependencies
