@@ -45,6 +45,13 @@ opts.parameterestimation = 'none';
 sbm.infer(fluorescence, image_times, indicator, params, opts)
 ```
 
+To use the GPU, use:
+```matlab
+opts.usegpu = 'true';
+sbm.infer(fluorescence, image_times, indicator, params, opts)
+```
+This is essential for estimation of neuron-specific parameters from fluorescence data alone in a reasonable time, but useful in other cases as well.
+
 To fit all global and neuron-specific parameters to fluorescence with known AP times, use the function `sbm.fit.globalfit()` or its wrapper `gui/oedb_nonlinfit`.
 
 Additional API documentation will be added in the near future.
@@ -55,6 +62,8 @@ After installation, the graphical user interface can started with the command `o
 For SBM-based AP inference *without inferring neuron-specific parameters*, click the "filter/smooth" button.
 
 Datasets can be loaded into `oedatabrowser` automatically on startup by placing them in the data subdirectory of this repository, or can be manually imported.
+
+To enable GPU computation, check the menu item "Options | SBM | GPU computation". 
 
 Pressing **ctrl + D** in `oedatabrowser` saves several variables describing the currently selected data and AP inference results to the base Matlab workspace.
 
