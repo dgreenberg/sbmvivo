@@ -1,0 +1,1 @@
+This directory contains precompiled mex files for each architecture. It should NOT be put on the Matlab path. The parent folder will be put on the path by sbmvivo but will not get its mex files synched due to the .gitignore file.

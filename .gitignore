@@ -10,6 +10,6 @@
 *.toc
 *.out
 figs/
-*.mex*
+mex/sbm_cuda/*.mex*
 .directory
 data/*.mat
