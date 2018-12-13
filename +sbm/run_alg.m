@@ -154,7 +154,7 @@ else
         end
     end
 end
-assert(nvars < 10,'run_alg takes at most 9 inputs');
+assert(nvars < 10,'maximium of 9 inputs');
 
 for u = 1:numel(F) %check that each element of each cell array is correct
     

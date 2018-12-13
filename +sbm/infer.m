@@ -46,7 +46,7 @@ if any(max_deviation > 1.02)
     
 end
 
-[M, params, opts] = sbm.run_alg(f, dt, indicator, opts, params, [], [], nA2D);
+[M, params, opts, ~, ~, ~, moments] = sbm.run_alg(f, dt, indicator, opts, params, [], [], nA2D);
 aptimes = cell(1, nsegments);
 aptimes_window = nan(nsegments, 2);
 for s = 1:nsegments
@@ -71,6 +71,6 @@ for s = 1:nsegments
     st(after_last_measurement) = it{s}(end) + (st_frames(after_last_measurement) - nframes) * dt(s);
     
     aptimes{s} = st;
-    aptimes_window(s, :) = [it{s}(1) - dt(s), it{s}(end) - stepsize] + 0.5 * stepsize * [-1 1] + tshift;
+    aptimes_window(s, :) = [it{s}(1) - dt(s), it{s}(end) - stepsize] + 0.5 * stepsize * [-1 1];
     
 end
