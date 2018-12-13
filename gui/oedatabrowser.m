@@ -52,7 +52,8 @@ setappdata(handles.oedatabrowser_figure,'ui',default_oedatabrowser_uistruct);
 update_ui(handles, oedb, fileinfo);
 show_data(handles);
 init_appearance(handles);
-set(hObject,'renderer','painters'); %zbuffer causes hangs when zooming in / out
+set(hObject,'renderer','painters');  % zbuffer causes hangs when zooming in / out
+set(handles.menu_train,'visible','off'); % feature not yet fully implemented
 
 
 function init_appearance(handles)
