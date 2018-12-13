@@ -33,22 +33,32 @@ They may also work with other configurations but have not been widely tested. Ch
 ## Command line tools
 SBM-based inference of AP times and neuron-specific parameters from fluorescence alone, when global parameters are known, is available through the command
 ```matlab
-sbm.infer(fluorescence, image_times, indicator)
+aptimes = sbm.infer(fluorescence, image_times, indicator);
 ```
-see `help(sbm.infer)` for more details. Currently, the valid choices for the `indicator` string input are 'gcamp6s', 'gcamp6f' and 'ogb1-am'. Default global parameters will be used depending on the indicator, if available. Alternatively, you can supply your own parameters with
+see `help(sbm.infer)` for more details.
+
+As an example of how to prepare the inputs to `sbm.finer`, suppose we want to run the SBM on the second neuron of the dataset provided with the arXiv paper. Then we would use
 ```matlab
-sbm.infer(fluorescence, image_times, indicator, params)
+load('in vivo imaging with AP times.mat');
+fluorescence = {oerec.data(2).f};
+image_times = {oerec.data(2).t};
+indicator = 'gcamp6s';
+```
+
+Currently, the valid choices for the `indicator` string input are 'gcamp6s', 'gcamp6f' and 'ogb1-am'. Default global parameters will be used depending on the indicator, if available. Alternatively, you can supply your own parameters with
+```matlab
+aptimes = sbm.infer(fluorescence, image_times, indicator, params)
 ```
 Any parameters specified in `params` will override indicator-specific defaults. To infer AP times only *without inferring neuron-specific parameters*, use
 ```matlab
 opts.parameterestimation = 'none';
-sbm.infer(fluorescence, image_times, indicator, params, opts)
+aptimes = sbm.infer(fluorescence, image_times, indicator, params, opts);
 ```
 
 To use the GPU, use:
 ```matlab
 opts.usegpu = 'true';
-sbm.infer(fluorescence, image_times, indicator, params, opts)
+aptimes = sbm.infer(fluorescence, image_times, indicator, params, opts);
 ```
 This is essential for estimation of neuron-specific parameters from fluorescence data alone in a reasonable time, but useful in other cases as well.
 
