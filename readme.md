@@ -37,15 +37,15 @@ aptimes = sbm.infer(fluorescence, image_times, indicator);
 ```
 see `help(sbm.infer)` for more details.
 
-As an example of how to prepare the inputs to `sbm.finer`, suppose we want to run the SBM on the second neuron of the dataset provided with the arXiv paper. Then we would use
+As an example of how to prepare the inputs to `sbm.infer`, suppose we want to run the SBM on all data for the third neuron of the dataset provided with the arXiv paper. Then we would use
 ```matlab
 load('in vivo imaging with AP times.mat');
-fluorescence = {oerec.data(2).f};
-image_times = {oerec.data(2).t};
+fluorescence = {oerec(3).data.f};
+image_times = {oerec(3).data.t};
 indicator = 'gcamp6s';
 ```
 
-Currently, the valid choices for the `indicator` string input are 'gcamp6s', 'gcamp6f' and 'ogb1-am'. Default global parameters will be used depending on the indicator, if available. Alternatively, you can supply your own parameters with
+Currently, the valid choices for the `indicator` string input are 'gcamp6s' and 'gcamp6f'. Default global parameters will be used depending on the indicator, if available. Alternatively, you can supply your own parameters with
 ```matlab
 aptimes = sbm.infer(fluorescence, image_times, indicator, params)
 ```
@@ -57,7 +57,7 @@ aptimes = sbm.infer(fluorescence, image_times, indicator, params, opts);
 
 To use the GPU, use:
 ```matlab
-opts.usegpu = 'true';
+opts.usegpu = true;
 aptimes = sbm.infer(fluorescence, image_times, indicator, params, opts);
 ```
 This is essential for estimation of neuron-specific parameters from fluorescence data alone in a reasonable time, but useful in other cases as well.
@@ -73,7 +73,7 @@ For SBM-based AP inference *without inferring neuron-specific parameters*, click
 
 Datasets can be loaded into `oedatabrowser` automatically on startup by placing them in the data subdirectory of this repository, or can be manually imported.
 
-To enable GPU computation, check the menu item "Options | SBM | GPU computation". 
+To enable GPU computation, check the menu item "Options | SBM | GPU computation".
 
 Pressing **ctrl + D** in `oedatabrowser` saves several variables describing the currently selected data and AP inference results to the base Matlab workspace.
 
