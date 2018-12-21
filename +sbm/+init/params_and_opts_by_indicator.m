@@ -87,7 +87,7 @@ switch lower(indicatorstring) %assign indicator-dependent parameters
             
         else
             
-            error('unrecognized GCaMP variant');
+            error('sbm:gcampvariantnotrecognized','unrecognized GCaMP variant');
             
         end
         
@@ -95,12 +95,7 @@ switch lower(indicatorstring) %assign indicator-dependent parameters
         
         %fixme: we should suppress this warning if all params were supplied
         %by the user.
-        warning('sbm:indicatornotrecognized','unrecognized indicator, using parameters for ogb1-am');
+        error('sbm:indicatornotrecognized','unrecognized indicator');
         V.onrate = false; %FIXME don''t copy-paste these values, it'll lead to a mistake later
-        V.saturation = false;
-        V.poly = false;
-        P.k_d       = 300;
-        P.n         = 1; %hill exponent
-        V.expected_Frat_per_ap = 0.1; %expected frac. increase in F from 1 AP
         
 end

@@ -1,6 +1,5 @@
 function [P, prevP, prevlik] = est_params_temperedmode(opts, params0, dt, f, nA2D)
 st = [];
-dodisplay = true;
 target_mc_LL_variance = 0.1;
 ntrials_initial = 15;
 
@@ -37,16 +36,17 @@ end
 [Pfunc, p0, paramnames, index] = paramest_parameterization(params0, opts);
 
 %measure MC variance
-wb = waitbar(0, 'Measuring MC variance');
+if opts.usefiguregraphics, wb = waitbar(0, 'Measuring MC variance'); end
 for j = 1:ntrials_initial
+    
     try
-        waitbar(j / ntrials_initial, wb);
+        if opts.usefiguregraphics, waitbar(j / ntrials_initial, wb); end
     catch
     end
     [Linit(j), ~, ~, priorpinit(j)] = log_likelihood(f, dt, opts, params0, st, nA2D, gpudata);
     
 end
-if isvalid(wb); close(wb); end
+if opts.usefiguregraphics && isvalid(wb); close(wb); end
 
 log_posterior_init = Linit + priorpinit; %missing a normalization factor but doesn't matter
 temperature = max(std(log_posterior_init) / sqrt(target_mc_LL_variance), opts.tm_mintemp);
@@ -61,7 +61,7 @@ proposal = orderfields(struct( ...
 box_constraints = [log(opts.absolute_min_S) -inf; inf inf];
 
 displayfunc = [];
-if dodisplay
+if opts.usefiguregraphics
     
     figh = figure('menubar','none', 'units','normalized', 'position',[.1 .1 .8 .8]);    
     
@@ -89,7 +89,7 @@ prevP = cat(1, params0, prevP);
 prevlik = cat(1, extradata.lik); %niter x nseg matrix
 prevlik = cat(1, prevlik(1,:), prevlik); %hack, FIXME
 
-if dodisplay && isvalid(figh)
+if opts.usefiguregraphics && isvalid(figh)
     
     close(figh);
     
