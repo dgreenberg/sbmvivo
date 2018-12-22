@@ -99,7 +99,7 @@ while ndraws < maxdraws && (ndraws < mindraws || sum(accepted) < halt_on_n_accep
     end
     ndraws = ndraws + 1;
     
-    update_mixture = (~mod(ndraws, update_every) || ndraws == maxdraws || ndraws = mindraws) && naccepted >= min_accepted_draws_forupdate;
+    update_mixture = (~mod(ndraws, update_every) || ndraws == maxdraws || ndraws == mindraws) && naccepted >= min_accepted_draws_forupdate;
     
     if preliminary_phase && naccepted >= min_accepted_draws_forupdate
         
