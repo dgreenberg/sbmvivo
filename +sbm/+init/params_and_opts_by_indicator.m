@@ -10,21 +10,14 @@ if ~isempty(gcloc)
     
 end
 switch lower(indicatorstring) %assign indicator-dependent parameters
-    case 'ogb1-am'
-        
-        V.onrate = false;
-        V.saturation = false;
-        V.poly = false;
-        P.mu_b_init = 50;
-        P.c0      = 25;
-        P.A       = 250;
-        P.k_d     = 300;
-        P.tau_c   = 0.5;
-        P.n       = 1; %hill exponent
-        V.expected_Frat_per_ap = 0.1; %expected frac. increase in F from 1 AP
-        V.bound_to_free_fluorescence_ratio = 14; %"Long-Wavelength Calcium Indicators" by Molecular Probes http://tools.invitrogen.com/content/sfs/manuals/mp03010.pdf
         
     case 'gcamp'
+        
+        if ~strcmpi(gcampsuffix, '6s')
+            
+            error('unrecognized gcamp variant: %s', gcampsuffix);
+            
+        end
         
         V.model = '5s2b';
         if strcmpi(V.model, '5s2b')
@@ -55,47 +48,11 @@ switch lower(indicatorstring) %assign indicator-dependent parameters
             
         end
         
-        if gcampsuffix(1) == '3'
-            
-            P.n = 2.54;
-            P.k_d = 345 ^ P.n;
-            P.tau_s = 1 / 2.57;
-            
-        elseif gcampsuffix(1) == '5' %for 5G, not sure about other variants
-            
-            P.tau_s = 1 / 2.52;
-            
-        elseif gcampsuffix(1) == '6'
-            
-            if strcmpi(gcampsuffix(2),'m')
-                
-                V.expected_Frat_per_ap = 0.13;
-                
-            elseif strcmpi(gcampsuffix(2),'f')
-                
-                V.expected_Frat_per_ap = 0.19;
-                
-            elseif strcmpi(gcampsuffix(2),'s') || strcmpi(gcampsuffix,'641')
-                
-                V.expected_Frat_per_ap = 0.14; %0.23;
-                
-            else
-                
-                error('unrecognized GCaMP6 variant');
-                
-            end
-            
-        else
-            
-            error('sbm:gcampvariantnotrecognized','unrecognized GCaMP variant');
-            
-        end
-        
+    
     otherwise
         
-        %fixme: we should suppress this warning if all params were supplied
+        %fixme: we should suppress this error if all needed params were supplied
         %by the user.
         error('sbm:indicatornotrecognized','unrecognized indicator');
-        V.onrate = false; %FIXME don''t copy-paste these values, it'll lead to a mistake later
         
 end
