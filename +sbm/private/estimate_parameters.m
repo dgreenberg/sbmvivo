@@ -46,7 +46,7 @@ if sum(points_per_segment) > V.maxpoints_paramest
     
     if V.verbose > 2
         
-        fprintf('Total data length of %d exceeds maximum length of %d, using partial data from %d segments.\n', ...
+        fprintf('Total data length of %d exceeds maximum length of %d, using partial data from %d segments to estimate neuron-specific parameters (all data will be used for AP inference).\n', ...
             sum(points_per_segment), V.maxpoints_paramest, numel(segments_used));
         
     end

@@ -25,10 +25,10 @@ Precompiled MEX wrappers for CUDA algorithms are provided for the following setu
 * Linux
 * CUDA 9.1 release 9.1.85
 * nVidia driver version 390.48
-* GPU: Tesla K40, Tesla K20c or GeForce GTX 1080
-* Matlab R2018a
+* GPU: Tesla K40, Tesla K20c, GeForce GTX 1080 or GeForce RTX 2080
+* Matlab R2018a or R2018b
 
-They may also work with other configurations but have not been widely tested. Changing the graphics card or Matlab version probably won't make a difference, while changing the CUDA version may require recompilation. If the precompiled MEX files do not work, you out of the box on your system, you will have to recompile them (see below).
+They may also work with other configurations but have not been widely tested. Changing the graphics card or Matlab version probably won't make a difference, while changing the CUDA version may require recompilation. If the precompiled MEX files do not work out of the box on your system, you will have to recompile them (see below).
 
 ## Command line tools
 SBM-based inference of AP times and neuron-specific parameters from fluorescence alone, when global parameters are known, is available through the command
