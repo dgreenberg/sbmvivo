@@ -1,5 +1,5 @@
 function [samples, targetlogpvals, acceptance_ratio, accepted, gstar, extradata, first_update, preliminary_phase_end] = aimh_gk( ...
-    targetlogpfunc, proposal, p0, temperature, maxdraws, displayfunc, box_constraints, w1, w2, L, alpha_L, M, alpha_M, w1_init)
+    targetlogpfunc, proposal, p0, temperature, mindraws, maxdraws, halt_on_n_accepted, displayfunc, box_constraints, w1, w2, L, alpha_L, M, alpha_M, w1_init)
 %proposal must be a gmix struct
 %
 %http://amstat.tandfonline.com/doi/abs/10.1198/jcgs.2009.07174
@@ -39,8 +39,14 @@ end
 if ~exist('w1_init', 'var') || isempty(w1_init)
     w1_init = 0.75; %0.6
 end
+if ~exist('mindraws', 'var') || isempty(mindraws)
+    mindraws = 400;
+end
 if ~exist('maxdraws', 'var') || isempty(maxdraws)
-    maxdraws = 1000;
+    maxdraws = mindraws * 3;
+end
+if ~exist('halt_on_n_accepted', 'var') || isempty(halt_on_n_accepted)
+    halt_on_n_accepted = max(10, ceil(mindraws / 4));
 end
 if ~exist('displayfunc', 'var') || isempty(displayfunc)
     displayfunc = [];
@@ -64,7 +70,7 @@ preliminary_phase = true;
 t0 = now;
 
 preliminary_phase_completed = false;
-while ndraws < maxdraws
+while ndraws < maxdraws && (ndraws < mindraws || sum(accepted) < halt_on_n_accepted)
     
     next_draw = gmix_sample(q);
     while any(next_draw < box_constraints(1, :)) || any(next_draw > box_constraints(2, :))
@@ -93,7 +99,7 @@ while ndraws < maxdraws
     end
     ndraws = ndraws + 1;
     
-    update_mixture = (~mod(ndraws, update_every) || ndraws == maxdraws) && naccepted >= min_accepted_draws_forupdate;
+    update_mixture = (~mod(ndraws, update_every) || ndraws == maxdraws || ndraws = mindraws) && naccepted >= min_accepted_draws_forupdate;
     
     if preliminary_phase && naccepted >= min_accepted_draws_forupdate
         
