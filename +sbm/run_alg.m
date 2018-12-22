@@ -24,7 +24,7 @@ function [M, P, V, lik, prevP, x, moments, prevlik] = run_alg(varargin)
 [P,V] = sbm.init.initialize_params_and_settings_from_data(F, dt, P0, V0, indicatorstring, nA2D); %assigns any parameters and settings not supplied by the user using default values, some of which may be data-dependent
 prevP = P([],:); prevlik = repmat(empty_likstruct, 0, numel(F));
 
-do_paramest = V.max_iter_paramest > 0 && ~strcmpi(V.parameterestimation, 'none');
+do_paramest = V.min_iter_paramest > 0 && ~strcmpi(V.parameterestimation, 'none');
 if do_paramest
     
     [P, prevP, prevlik] = estimate_parameters(V, P, dt, F, nA2D);

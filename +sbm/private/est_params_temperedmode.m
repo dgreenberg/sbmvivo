@@ -71,7 +71,7 @@ if opts.usefiguregraphics
 end
 
 %run the Giordani and Kohn adaptive independent Metropolis-Hasting algorithm
-[samples, targetlogpvals, acceptance_ratio, accepted, gstar, extradata, first_update, preliminary_phase_end] = aimh_gk(targetlogpfunc, proposal, p0, temperature, opts.max_iter_paramest, displayfunc, box_constraints);
+[samples, targetlogpvals, acceptance_ratio, accepted, gstar, extradata, first_update, preliminary_phase_end] = aimh_gk(targetlogpfunc, proposal, p0, temperature, opts.min_iter_paramest, displayfunc, box_constraints);
 
 if ~isempty(first_update) && size(samples, 1) - first_update >= 100 && sum(accepted(first_update + 1:end)) > 20
     

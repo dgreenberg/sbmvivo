@@ -702,10 +702,10 @@ catch %#ok<CTCH>
 end
 
 function estep_button_Callback(hObject, eventdata, handles)
-mi = ui_getval(handles.maxiter_edit);
-ui_setval(handles.maxiter_edit, 0);
+mi = ui_getval(handles.sbm_iter_edit);
+ui_setval(handles.sbm_iter_edit, 0);
 detect_button_Callback(handles.detect_button, eventdata, handles);
-ui_setval(handles.maxiter_edit, mi);
+ui_setval(handles.sbm_iter_edit, mi);
 
 
 function [ui, fileinfo, selectiontype, algind, algname, oedb, segmentlist] = oedb_getbasics(handles)
@@ -1240,11 +1240,11 @@ clear_Pui(handles);
 Pfields_toui = Pfields_ui;
 h_simonly = simonly_uiobj(handles);
 h_sbmonly = [handles.estep_button handles.parameterestimation_popup handles.parameterestimation_text handles.nparticles_edit ...
-    handles.nparticles_text handles.maxiter_edit handles.maxiter_text handles.maxjitter_edit handles.maxjitter_text];
+    handles.nparticles_text handles.sbm_iter_edit handles.sbm_iter_text handles.maxjitter_edit handles.maxjitter_text];
 
 set([h_simonly h_sbmonly],'visible','off');
 
-if ~all([ui.selecteddataset ui.selectedneuron ui.selectedsegment]), return; end;
+if ~all([ui.selecteddataset ui.selectedneuron ui.selectedsegment]), return; end
 
 oerec = fetch_neurondata(oedb, fileinfo, ui.selecteddataset, ui.selectedneuron);
 
@@ -1349,7 +1349,7 @@ end
 
 function opts = sbm_optsfromui(handles)
 opts = orderfields(struct( ...
-    'max_iter_paramest', ui_getval(handles.maxiter_edit), 'Nparticles', ui_getval(handles.nparticles_edit) ...
+    'min_iter_paramest', ui_getval(handles.sbm_iter_edit), 'Nparticles', ui_getval(handles.nparticles_edit) ...
     ,'filtersmoother_window', ui_getval(handles.fswin_edit) ...
     ,'verbose', verbositylevel_query(handles) ...
     ,'shotnoise', ui_ison(handles.sbm_shotnoise) ...
@@ -1662,10 +1662,10 @@ function cheat_checkbox_Callback(hObject, eventdata, handles)
 show_data(handles);
 
 
-function maxiter_edit_Callback(hObject, eventdata, handles)
+function sbm_iter_edit_Callback(hObject, eventdata, handles)
 
 
-function maxiter_edit_CreateFcn(hObject, eventdata, handles)
+function sbm_iter_edit_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
@@ -2203,8 +2203,8 @@ end
 [~,it,~,~] = oedb_fetch_timeseries(oedb, fileinfo, ui.selecteddataset, ui.selectedneuron, ui.selectedsegment);
 dt = median(diff(it));
 
-mi = ui_getval(handles.maxiter_edit);
-ui_setval(handles.maxiter_edit, 0);
+mi = ui_getval(handles.sbm_iter_edit);
+ui_setval(handles.sbm_iter_edit, 0);
 
 answer = inputdlg({'Number of repeats (3+)', 'Mininum window size (sec)', 'Maximum window size (sec)', 'Window size step (sec)'}, ...
     'Filter-smoother window size exploration', 1, {'25', '0.0', '1.0', num2str(dt)}); if isempty(answer), return; end
@@ -2252,7 +2252,7 @@ assignin('base','corr',corr);
 assignin('base','dr',dr);
 assignin('base','fp',fp);
 assignin('base','winsizes',winsizes);
-ui_setval(handles.maxiter_edit, mi);
+ui_setval(handles.sbm_iter_edit, mi);
 
 
 function sbm_vartest_Callback(hObject, eventdata, handles)
@@ -2273,8 +2273,8 @@ if isempty(segmentlist)
     segmentlist = 1:oedb.nsegments{ui.selecteddataset}(ui.selectedneuron);
 end
 
-mi = ui_getval(handles.maxiter_edit);
-ui_setval(handles.maxiter_edit, 0);
+mi = ui_getval(handles.sbm_iter_edit);
+ui_setval(handles.sbm_iter_edit, 0);
 
 set(handles.oedatabrowser_figure,'pointer','watch'); drawnow;
 L = zeros(1, nrepeats);
@@ -2330,7 +2330,7 @@ for k = 1:nrepeats
 end
 assignin('base','vartest',orderfields(struct('logcondpnextobs', logcondpnextobs, 'corr', corr, 'dr', dr, 'fp', fp,'ns', ns, 'L', L, 'ui', ui, 'odbfile', fileinfo.odbfile)));
 if isvalid(wb); close(wb); end
-ui_setval(handles.maxiter_edit, mi);
+ui_setval(handles.sbm_iter_edit, mi);
 set(handles.oedatabrowser_figure,'pointer','arrow');
 
 figh = figure(); ax = [];
