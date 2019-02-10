@@ -1497,7 +1497,7 @@ oedb.algavailable = false(1, nalg);
 for algind = 1:nalg
     
     matchind = find(strcmpi(prevalgs.algnames, oedb.algnames{algind}),1);
-    if isempty(matchind), continue; end;
+    if isempty(matchind), continue; end
     [oedb.algfunctions{algind}, oedb.alginfo(algind), oedb.trainfunctions{algind}] = deal(prevalgs.algfunctions{matchind}, prevalgs.alginfo(matchind), prevalgs.trainfunctions{matchind});
     oedb.algavailable(algind) = true;
     

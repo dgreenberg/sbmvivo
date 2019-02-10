@@ -161,7 +161,7 @@ savefigs = false;
 if strcmpi(fitmode, 'crossval')
     
     [training_neurons, testing_neurons] = crossval_groups(nneurons);
-    if isnan(training_neurons), return; end
+    if any(isnan(training_neurons(:))), return; end
     one_test_per_neuron = size(testing_neurons, 1) == nneurons && size(testing_neurons, 2) == 1 && numel(testing_neurons) == numel(unique(testing_neurons)) && all(unique(testing_neurons(:)) == (1:nneurons)');
     ngroups = size(training_neurons, 1);
     
@@ -451,41 +451,36 @@ if strcmpi(answer{1}, 'all')
     
     training_neurons = arrayfun(@(v) setdiff(1:nneurons, v), 1:nneurons, 'uniformoutput', false);
     training_neurons = cat(1, training_neurons{:});
+    testing_neurons = [];
+    for j = 1:size(training_neurons, 1)
+        
+        testing_neurons = [testing_neurons; setdiff(1:nneurons, training_neurons(j, :))]; %#ok<AGROW>
+        
+    end
+
     
 elseif ntrain == 1
     
     training_neurons = [2:nneurons, 1]';  % could randomize order, but for now let's not, for reproducibility
+    testing_neurons = [];
+    for j = 1:size(training_neurons, 1)
+        
+        testing_neurons = [testing_neurons; setdiff(1:nneurons, training_neurons(j, :))]; %#ok<AGROW>
+        
+    end
+
     
 else
     
-    ngroups = nan;
-    while ~isfinite(ngroups) || ngroups ~= round(ngroups) || imag(ngroups) ~= 0 || ngroups <= 0 || ntrain >= nchoosek(nneurons, ntrain)
-        
-        answer = inputdlg({'Number of groups'}, 'Nonlinear fit', 1, {num2str(nneurons)});
-        if isempty(answer), return; end
-        ngroups = str2double(answer{1});
-        
-    end
-    
+    assert(ntrain <= nneurons - 1);
+    testing_neurons = (1:nneurons)';
     training_neurons = [];
-    while size(training_neurons, 1) < ngroups
+    for j = 1:nneurons
         
-        per = randperm(nneurons, ntrain);
-        if size(training_neurons, 1) > 0 && any(all(bsxfun(@eq, per, training_neurons), 2))
-            
-            continue;  %already have this group
-            
-        end
-        training_neurons = [training_neurons; per]; %#ok<AGROW>
+        others = setdiff(1:nneurons, j);
+        training_neurons = [training_neurons; others(randperm(nneurons - 1, ntrain))];         %#ok<AGROW>
         
     end
-    
-end
-
-testing_neurons = [];
-for j = 1:size(training_neurons, 1)
-    
-    testing_neurons = [testing_neurons; setdiff(1:nneurons, training_neurons(j, :))]; %#ok<AGROW>
     
 end
 
