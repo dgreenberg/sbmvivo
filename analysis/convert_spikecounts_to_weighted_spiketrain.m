@@ -1,6 +1,6 @@
 function [st, w, twin] = convert_spikecounts_to_weighted_spiketrain(ns, t_ns)
 assert(~all(isnan(ns)), 'spikecounts cannot all be NaN');
-
+ns = ns(:);
 s = find(~isnan(ns), 1);
 e = find(~isnan(ns), 1, 'last');
 ns = ns(s:e);
