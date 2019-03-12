@@ -31,7 +31,7 @@ if isa(target,'struct')
     bobdata = target;
     assert(bobdata.version >= bobloadopts.minbobversion); %FIXME update as well?
     if isempty(bobdata.file.bobfile)
-        oerec.name = bobdata.image.filename;
+        oerec.name = bobdata.image.filename.getFullPath();
     else
         oerec.name = bobdata.file.bobfile;
     end
@@ -314,7 +314,7 @@ if bobdata.electro.nrOfChannels > 0 % && ~isempty(bobdata.electro.channels{1}.da
     data.apcounts = reshape(ns(1:end-1), numel(data.t), 1);
     data.apcounts_present = true;
 end
-[~,~,ext] = fileparts(bobdata.image.filename); %this refers to the imported file, even if a .bob file was later saved
+[~,~,ext] = fileparts(bobdata.image.filename.getFullPath()); %this refers to the imported file, even if a .bob file was later saved
 data.info.dwelltimeperimage = dt * size(bobdata.roi.interior{roiind},1) / (bobdata.image.width * bobdata.image.height); %fixme should take into account dead time etc.
 if strcmpi(ext,'.cfd')
     
