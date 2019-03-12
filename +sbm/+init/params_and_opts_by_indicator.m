@@ -22,6 +22,8 @@ function [P,V] = params_and_opts_by_indicator(indicatorstring)
 %
 % normal_meancov_logSR is calculated as
 %   logSR = log([S_eachneuron, R_eachneuron]); % _eachneuron has shape n x 1
+%     or
+%   logSR = log([ unique([Pout.S])' unique([Pout.R])' ] )
 %   normal_meancov_logSR = [mean(logSR, 1)' cov(logSR)];
 % All other quantities in P are direct outputs of oedb_nonlinfit.m
 
