@@ -109,7 +109,7 @@ if ~exist(basefigsavedir, 'dir') && savefigs
     end
 end
 
-answer = inputdlg({'Model fit directory name'}, 'Nonlinear fit', 1, {datestr(now, 'ddmmyy')});
+answer = inputdlg({'Model fit directory name'}, 'Nonlinear fit', 1, {datestr(now, 'yyyymmdd-HHMMSS')});
 if isempty(answer), return; end
 basefigsavedir = [basefigsavedir answer{1} filesep];
 if ~exist(basefigsavedir, 'dir') && savefigs
