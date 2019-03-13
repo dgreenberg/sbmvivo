@@ -53,9 +53,14 @@ end
 if ~exist('P','var') || ~exist('V','var')
     %fixme: we should suppress this error if all needed params were supplied
     %by the user, i.e., check for all required fields
+    [f, p] = getfile_fromp(sbm.config_dir, '*.mat', 'Load indicator config');
+    if ~isnumeric(f)
+        load(fullfile(p,f),'-mat','P','V');
+    end
     
-    error('sbm:indicatornotrecognized','unrecognized indicator');
-        
+    if ~exist('P','var') || ~exist('V','var')
+        error('sbm:indicatornotrecognized','unrecognized indicator');
+    end
 end
 
 end
