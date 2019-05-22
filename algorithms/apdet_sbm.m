@@ -55,7 +55,7 @@ for n = 1:nrecs
             after_last_measurement = st_frames > nframes;
             st(after_last_measurement) = it{s}(end) + (st_frames(after_last_measurement) - nframes) * dt(s);
             
-            r{n}(s).spiketimes = st;
+            r{n}(s).spiketimes = sort(st);  % sort to deal with numerical error, ordering is needed for test_spike_recon.m
             %extend window half a step before/after first/last possible time for a simulated spike:
             r{n}(s).spiketimes_window = [it{s}(1) - dt(s), it{s}(end) - stepsize] + 0.5 * stepsize * [-1 1];
             
