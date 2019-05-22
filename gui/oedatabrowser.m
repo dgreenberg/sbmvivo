@@ -84,119 +84,6 @@ end
 [oedb.algavailable] = deal(true(1, numel(oedb.alginfo)));
 
 
-function oedb = import_dataset(oedb, fileinfo, datafile)
-assert(exist(datafile, 'file') == 2, 'file not found');
-
-u = oedb.ndatasets + 1;
-oedb.sourcedatafiles{u} = datafile;
-
-nneuronstotal = sum(oedb.nneurons);
-nsegtotal = sum(cat(2, oedb.nsegments{:}));
-
-[~, ff, ee] = fileparts(datafile);
-if numel(ff) > 0 && strcmpi(ee, '.mat')
-    oedb.datasetnames{u} = ff;
-else
-    oedb.datasetnames{u} = [ff ee];
-end
-
-if ~isempty(whos('-file', datafile, 'oerec'))
-    
-    oedb.issimulation(u) = false;
-    if numel(oedb.datasetnames{u}) > 8 && strcmpi(oedb.datasetnames{u}(1:8),'dataset_')
-        oedb.datasetnames{u} = oedb.datasetnames{u}(9:end);
-    end
-    oedb.data{u} = oerec_load(oedb.sourcedatafiles{u}); %also updates version if necessary
-    oedb.nneurons(u) = numel(oedb.data{u});
-        
-elseif ~isempty(whos('-file', datafile, 'oesim'))
-    
-    oedb.issimulation(u) = true;
-    if numel(oedb.datasetnames{u}) > 11 && strcmpi(oedb.datasetnames{u}(1:11),'simulation_')
-        oedb.datasetnames{u} = oedb.datasetnames{u}(12:end);
-    end
-    oedb.data{u} = oesim_load(oedb.sourcedatafiles{u}); %also updates version if necessary
-    oedb.nneurons(u) = numel(oedb.data{u}.oerec);
-    
-else
-    
-    error('invalid file');
-    
-end
-assert(~isempty(oedb.data{u}), ['failed to load data from file ' oedb.sourcedatafiles{u}]);
-
-oedb.expandneuron{u} = true(1, oedb.nneurons(u));
-[oedb.neuronnames{u}, oedb.segmentnames{u}, oedb.segcode{u}, oedb.neuroncode{u}] = deal(cell(1, oedb.nneurons(u)));
-oedb.nsegments{u} = nan(1, oedb.nneurons(u));
-for v = 1:oedb.nneurons(u)
-    
-    nneuronstotal = nneuronstotal + 1;
-    
-    if oedb.issimulation(u)
-        oerec = oedb.data{u}.oerec(v);
-        oesim = oedb.data{u}; oesim.oerec = oesim.oerec(v);
-    else
-        oerec = oedb.data{u}(v);
-    end
-    oedb.nsegments{u}(v) = numel(oerec.data);
-    if oedb.nsegments{u}(v) < 2
-        oedb.expandneuron{u}(v) = false;
-    end
-    
-    oedb.neuronnames{u}{v} = oedb_generate_neuron_name(oerec, v);
-    oedb.neuroncode{u}{v} = num2str(nneuronstotal, 9);
-    if ~oedb.opt.storedatainmemory
-        if oedb.issimulation(u)
-            save([fileinfo.tmpdir 's' oedb.neuroncode{u}{v} '.mat'],'oesim');
-        else
-            save([fileinfo.tmpdir 'n' oedb.neuroncode{u}{v} '.mat'],'oerec');
-        end
-    end
-    
-    ifiles = {oerec.data.imagefilepartialpath};
-    ifiles_fullpath = {oerec.data.imagefilepartialpath};
-    ifiles(cellfun(@isempty, ifiles)) = ifiles_fullpath(cellfun(@isempty, ifiles));
-    for w = 1:oedb.nsegments{u}(v)
-        if ~isempty(ifiles{w})
-            [~,ifiles{w},~] = fileparts(ifiles{w});
-        end
-    end
-    [~,~,ifileind] = unique(ifiles);
-    
-    [oedb.segcode{u}{v}, oedb.segmentnames{u}{v}] = deal(cell(1, oedb.nsegments{u}(v)));
-    for w = 1:oedb.nsegments{u}(v)
-        nsegtotal = nsegtotal + 1;
-        oedb.segcode{u}{v}{w} = num2str(nsegtotal, 9);
-        if ~isempty(oerec.data(w).imagefile)
-            oedb.segmentnames{u}{v}{w} = ifiles{w};
-            if sum(ifileind == ifileind(w)) > 1
-                ifilesegind = find(w == find(ifileind == ifileind(w)));
-                oedb.segmentnames{u}{v}{w} = [oedb.segmentnames{u}{v}{w} ' (seg ' num2str(ifilesegind) ')'];
-            end
-        else
-            oedb.segmentnames{u}{v}{w} = num2str(w);
-        end
-        nmatchingchars = strnmatchingchars(oedb.segmentnames{u}{v}{w}, oedb.neuronnames{u}{v});
-        if nmatchingchars > 5
-            oedb.segmentnames{u}{v}{w} = oedb.segmentnames{u}{v}{w}(nmatchingchars + 1:end); %remove neuron name from segment name
-        end
-        if numel(oedb.segmentnames{u}{v}{w}) > 1 && ismember(oedb.segmentnames{u}{v}{w}(1), '/\_:., ')
-            oedb.segmentnames{u}{v}{w} = oedb.segmentnames{u}{v}{w}(2:end);
-        end
-    end
-    assert(nsegtotal < oedb_maxtotalsegs, ['oedatabrowser is restricted to less than ' num2str(oedb_maxtotalsegs) ' data segments']);
-    
-end
-if ~oedb.opt.storedatainmemory
-    
-    oedb.data{u} = [];
-    
-end
-oedb.ndatasets = u;
-oedb.expanddataset(u) = true;
-oedb.samedatasize = samedatasizemat(oedb);  % keep track of whether each pair of datasets can be compared fluorscence value by fluorescence value
-
-
 function oedb = update_data(oedb, fileinfo)
 [oerec_datasets, oesim_datasets, oe_datadir] = oerec_getdatainfo();
 for u = 1:numel(oerec_datasets)
@@ -210,7 +97,6 @@ for u = 1:numel(oesim_datasets)
     
 end
 
-
 function file_import_Callback(hObject, eventdata, handles)
 [ui, fileinfo, selectiontype, algind, algname, oedb, segmentlist] = oedb_getbasics(handles);
 [f, p] = getfile_fromp(fileinfo.odbdir, '*.mat', 'Import optical / electrical dataset');
@@ -220,69 +106,8 @@ oedb = oedb_init_stats(oedb, oedb.ndatasets);
 setappdata(handles.oedatabrowser_figure,'oedb',oedb);
 update_ui(handles, oedb, fileinfo);
 
-
-function oedb = empty_oedbstruct
-oedb = struct('algnames',{{}},'algfunctions',{{}},'trainfunctions',{{}},'alginfo',empty_apdetalginfo,'algavailable',false(1,0), ...
-    'sourcedatafiles',{{}},'datasetnames',{{}},'neuronnames',{{}},'segmentnames',{{}},...
-    'ndatasets',0,'nneurons',zeros(1,0),'nsegments',{{}},'issimulation',false(1,0),...    
-    'expanddataset',false(1,0),'expandneuron',{{}},'opt',oedb_defaultoptstruct,...
-    'data',{{}},'results',{{}},'segcode',{{}} ...
-    ,'stats', orderfields(struct('bydataset', repmat(empty_statstruct,0,0), 'byneuron', {{}}, 'bysegment', {{}})) ...
-    ,'modified',false,'version',oedb_version);
-oedb = orderfields(oedb);
-
-
-function m = oedb_maxtotalsegs
-m = 1e9 - 1;
-
-
-function nname = oedb_generate_neuron_name(oerec, v)
-if isempty(oerec.name)
-    nname = ['nrn' num2str(v)];
-else
-    nname = oerec.name;
-end
-attr = reshape(oerec.info.attributes_qual, 1, []);
-if ~isempty(oerec.data) && ~isempty(oerec.data(1).info.indicator)
-    attr = [{oerec.data(1).info.indicator} attr];
-end
-if ~isempty(oerec.info.species)
-    attr = [{oerec.info.species} attr];
-end
-if numel(oerec.data) > 1
-    attr = [attr {[num2str(numel(oerec.data)) ' segments']}];
-end
-if numel(attr) > 0
-    nname = [nname ' (' attr{1}];
-    for jj = 2:numel(attr)
-        nname = [nname ', ' attr{jj}];
-    end
-    nname = [nname ')'];
-end
-
-
-function s = samedatasizemat(oedb)
-s = false(oedb.ndatasets);
-for u1 = 1:oedb.ndatasets
-    for u2 = u1 + 1:oedb.ndatasets
-        if oedb.nneurons(u1) ~= oedb.nneurons(u2), continue; end
-        if any(oedb.nsegments{u1} ~= oedb.nsegments{u2}), continue; end
-        d1 = cat(2, oedb.data{u1}.data);
-        d2 = cat(2, oedb.data{u2}.data);
-        if any(cellfun(@numel, {d1.f}) ~= cellfun(@numel, {d2.f})), continue; end
-        s(u1, u2) = true; s(u2, u1) = true;
-    end
-end
-
-
-function n = strnmatchingchars(s1, s2)
-m = min(numel(s1), numel(s2));
-n = sum(cumprod(double(s1(1:m) == s2(1:m))));
-
-
 function ui = default_oedatabrowser_uistruct
 ui = struct('row2dataset',[],'row2neuron',[],'row2segment',[],'selecteddataset',0,'selectedneuron',0,'selectedsegment',0);
-
 
 function zoomoutfull(handles)
 [ui, fileinfo, selectiontype, algind, algname, oedb, segmentlist] = oedb_getbasics(handles);
@@ -518,15 +343,6 @@ function clear_axes_oedatabrowser(handles)
 for axh = [handles.f_axes handles.spike_axes handles.ca_axes]
     delete(get(axh,'children'));
 end
-
-
-function opt = oedb_defaultoptstruct %FIXME: should probably turn off storedatainmemory automatically when data on disk corresponds to at least some minimum predicted size in memory
-opt = orderfields(struct(...
-    'storedatainmemory',true,'figsavedir',[fileparts(mfilename('fullpath')) filesep '..' filesep 'figs' filesep] ...
-    ,'expandonlyselected',true ...
-    ,'tol_sec', 0.2 ...
-    ));
-
 
 function update_ui(handles, oedb, fileinfo)
 update_datalist(handles, oedb);
