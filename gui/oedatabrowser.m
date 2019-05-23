@@ -495,7 +495,11 @@ ok = true;
 
 function selectiontype = get_selectiontype(handles)
 ui = getappdata(handles.oedatabrowser_figure,'ui');
-dv = get(handles.data_listbox,'value');
+dv = get(handles.data_listbox, 'value');
+if ~isempty(ui.row2neuron) && ~isempty(dv) && dv > numel(ui.row2neuron) % this can happen if we scroll too fast down the list
+    dv = numel(ui.row2neuron);
+    set(handles.data_listbox, 'value', dv);
+end
 if isempty(ui.row2neuron) || isempty(dv) || ~ui.row2neuron(dv)
     selectiontype = 'dataset';
 elseif ~ui.row2segment(dv)
@@ -503,6 +507,7 @@ elseif ~ui.row2segment(dv)
 else
     selectiontype = 'segment';
 end
+
 
 function varargout = oedatabrowser_OutputFcn(hObject, eventdata, handles)
 try
