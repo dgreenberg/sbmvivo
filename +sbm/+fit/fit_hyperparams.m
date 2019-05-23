@@ -5,7 +5,7 @@ nneurons = numel(nlist);
 for k = 1:nneurons
     
     ii = find(neuronind == nlist(k), 1);
-    if isempty(ii), continue; end
+    if isempty(ii) || isempty(P(ii).R), continue; end  % e.g. no baseline available for this neuron
     R_eachneuron(k) = P(ii).R;
     S_eachneuron(k) = P(ii).S;
     
